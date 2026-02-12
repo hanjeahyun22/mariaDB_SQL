@@ -74,9 +74,9 @@ SELECT jikwonno AS 사번, jikwonname AS 직원명, busernum AS 부서,
 ROUND(jikwonpay,0) AS 연봉,
 case jikwonno
 	when 10 
-		then ROUND(jikwonpay * 1.1)
+		then ROUND(jikwonpay * 1.1, 0)
 	when 30 
-		then ROUND(jikwonpay * 1.2)
+		then ROUND(jikwonpay * 1.2, 0)
 	ELSE jikwonpay
 	END AS 인상연봉,
 case

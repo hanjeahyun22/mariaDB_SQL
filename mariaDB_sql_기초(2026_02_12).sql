@@ -341,4 +341,28 @@ SELECT jikwonname, jikwonpay, jikwonjik,
 if (TRUNCATE(jikwonpay/1000, 0) >= 5, 'good', 'normal') AS result FROM jikwon;
 
 
+# ************************************************************************************************************************************
+# ************************************************************************************************************************************
+
+-- ================================== 집계함수 ================================== 
+-- 집계함수(복수행 함수)  : 전체 자료를 그룹별로 구분해 통계 결과를 얻기 위한 함수
+-- NULL값은 집계함수 계산에 포함 X --> sum은 애초에 0이기 때문에, 영향X
+SELECT SUM(jikwonpay) AS 합, AVG(jikwonpay) AS 평균 FROM jikwon;
+SELECT MAX(jikwonpay) AS 최댓값, MIN(jikwonpay) AS 최솟값 FROM jikwon;
+
+SELECT * FROM jikwon;
+UPDATE jikwon SET jikwonpay = NULL WHERE jikwonno = 5;
+DESC jikwon;		-- 모든 column에 NULL값 입력이 가능한게 X --> DESC 로 확인 필요!!
+
+SELECT AVG(jikwonpay), AVG(nvl(jikwonpay, 0)) FROM jikwon;					-- NULL값이 들어있는 값은 평균(AVG) 계산에 포함 X --> 'nvl(colcumn명, 0)'을 통해서 NULL값을 0으로 변환 필요
+SELECT sum(jikwonpay) / 29, sum(nvl(jikwonpay, 0)) / 30 FROM jikwon;
+
+SELECT COUNT(jikwonno), COUNT(jikwonpay) FROM jikwon;		-- jikwonpay column에 NULL값이 포함되어 있으므로, COUNT(jikwonpay) = 29
+SELECT COUNT(*) AS '인원수' FROM jikwon;			-- COUNT(*) 을 통해서 전체 개수 파악 가능
+
+-- STDDEV(column) : 표준편차 계산
+-- VAR_SAMP(column) : 분산 계산
+SELECT STDDEV(jikwonno) AS 표준편차, VAR_SAMP(jikwonpay) as 분산 FROM jikwon;
+SELECT COUNT(*) AS 인원, VAR_SAMP(jikwonpay) AS 분산 FROM jikwon WHERE busernum = 10;
+SELECT COUNT(*) AS 인원, VAR_SAMP(jikwonpay) AS 분산 FROM jikwon WHERE busernum = 20;
 
