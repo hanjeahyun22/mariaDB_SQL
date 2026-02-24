@@ -25,12 +25,21 @@ SELECT * FROM v_exam1;
 조건 : 직원수가 가장 많은 부서 출력
 위의 결과를 위한 뷰파일 v_exam2을 작성
 */
+
 CREATE OR REPLACE VIEW v_exam2 AS
 SELECT buser.busername AS 부서명, COUNT(jikwon.busernum) AS 인원수 FROM jikwon
 INNER JOIN buser ON jikwon.busernum = buser.buserno
 GROUP BY jikwon.busernum
 ORDER BY 인원수 DESC
 LIMIT 1;
+
+/*
+CREATE OR REPLACE VIEW v_exam2 AS
+SELECT buser.busername AS 부서명, COUNT(*) AS 인원수 FROM buser
+INNER JOIN jikwon ON buser.buserno = jikwon.busernum
+GROUP BY busername
+HAVING COUNT(*) = (SELECT COUNT(*) FROM jikwon GROUP BY busernum ORDER BY COUNT(*) DESC LIMIT 1);
+*/
 
 SELECT * FROM v_exam2;
 
@@ -54,8 +63,17 @@ case DATE_FORMAT(jikwon.jikwonibsail, '%w')
 	END AS 요일,
 buser.busername AS 부서명, SUBSTR(buser.busertel, -8, 8) AS 부서전화
 FROM jikwon
-INNER JOIN buser ON jikwon.busernum = buser.buserno
-
+LEFT OUTER JOIN buser ON jikwon.busernum = buser.buserno						-- 직원명은 다 나와야 하기 때문에, LEFT OUTER JOIN 사용
+WHERE 요일 = (SELECT case DATE_FORMAT(jikwon.jikwonibsail, '%w')
+	when 0 then '일요일'
+	when 1 then '월요일'
+	when 2 then '화요일'
+	when 3 then '수요일'
+	when 4 then '목요일'
+	when 5 then '금요일'
+	when 6 then '토요일'
+	END
+	ORDER BY COUNT(*) DESC LIMIT 1)
 ;
 
 -- WHERE 요일 = (SELECT v_exam3.요일 FROM v_exam3 GROUP BY 요일 ORDER BY COUNT(v_exam3.요일) DESC LIMIT 1)
